@@ -10,7 +10,6 @@ public class GameManager : Singleton<GameManager>
     private Canvas canvas;
 
 
-
     /// <summary>
     /// Main에서 Game Scene으로 전환시 호출될 메서드
     /// </summary>
@@ -26,12 +25,12 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene("Main");
     }
 
-    public void OpenConfirmPanel(string message)
+    public void OpenConfirmPanel(string message, ConfirmPanelController.OnConfirmButtonClicked onConfirmButtonClicked)
     {
         if (canvas != null)
         {
             var confirmPanelObject = Instantiate(confirmPanel, canvas.transform);
-            confirmPanelObject.GetComponent<ConfirmPanelController>().Show(message);
+            confirmPanelObject.GetComponent<ConfirmPanelController>().Show(message, onConfirmButtonClicked);
         }
     }
 
