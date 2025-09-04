@@ -15,9 +15,16 @@ public class PlayerState : BasePlayerState
     public override void Enter(GameLogic gameLogic)
     {
         // 1.First Player인지 확인해서 UI에 현재 턴 표시
-
+        if (isFirst)
+        {
+            GameManager.Instance.SetGameTurnPanel(GameUIController.GameTurnPanelType.ATurn);
+        }
+        else
+        {
+            GameManager.Instance.SetGameTurnPanel(GameUIController.GameTurnPanelType.BTurn);
+        }
         // 2.BlockController의 delegate에 해야할 일 전달(터치했을 때 실행될 결과)
-        gameLogic._blockController.OnBlockClickedDelegate = (row, col) =>
+        gameLogic.blockController.OnBlockClickedDelegate = (row, col) =>
         {
             // 블록이 터치 될 때까지 기다렸다가 터치 되면 처리할 일
             HandleMove(gameLogic, row, col);
@@ -26,7 +33,7 @@ public class PlayerState : BasePlayerState
 
     public override void Exit(GameLogic gameLogic)
     {
-        gameLogic._blockController.OnBlockClickedDelegate = null;
+        gameLogic.blockController.OnBlockClickedDelegate = null;
     }
 
     public override void HandleMove(GameLogic gameLogic, int row, int col)
@@ -38,11 +45,11 @@ public class PlayerState : BasePlayerState
     {
         if (isFirst)
         {
-            // 게임 로직에게 Second 플레이어 활성화
+            gameLogic.SetState(gameLogic.secondPlayerState);
         }
         else
         {
-            // 게임 로직에게 First 플레이어 활성화
+            gameLogic.SetState(gameLogic.firstPlayerState);
         }
     }
     #endregion

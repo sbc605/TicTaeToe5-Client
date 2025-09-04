@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
-{   
+{
     private Constants.GameType _gameType;
     [SerializeField] private GameObject confirmPanel;
 
@@ -10,6 +10,7 @@ public class GameManager : Singleton<GameManager>
     private Canvas canvas;
 
     private GameLogic gameLogic;
+    private GameUIController gameUIController;
 
 
     /// <summary>
@@ -36,6 +37,12 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    // 게임 씬에서 턴 표시하는 UI 제어
+    public void SetGameTurnPanel(GameUIController.GameTurnPanelType turnPanelType)
+    {
+        gameUIController.SetGameTurnPanel(turnPanelType);
+    }
+
     protected override void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
         canvas = FindFirstObjectByType<Canvas>();
@@ -44,7 +51,17 @@ public class GameManager : Singleton<GameManager>
         {
             // Block 초기화
             var blockConteroller = FindFirstObjectByType<BlockController>();
-            blockConteroller.InitBlocks();
+            if (blockConteroller != null)
+            {
+                blockConteroller.InitBlocks();
+            }
+
+            // GameUIController 할당 및 초기화
+            gameUIController = FindFirstObjectByType<GameUIController>();
+            if (gameUIController != null)
+            {
+                gameUIController.SetGameTurnPanel(GameUIController.GameTurnPanelType.None);
+            }
 
             // GameLogic 생성
             if (gameLogic != null)
