@@ -5,6 +5,8 @@ public class GameManager : Singleton<GameManager>
 {
     private Constants.GameType _gameType;
     [SerializeField] private GameObject confirmPanel;
+    [SerializeField] private GameObject signinPanel;
+    [SerializeField] private GameObject signupPanel;
 
     // Panel을 띄우기 위한 Canavas 정보
     private Canvas canvas;
@@ -12,6 +14,15 @@ public class GameManager : Singleton<GameManager>
     private GameLogic gameLogic;
     private GameUIController gameUIController;
 
+
+    private void Start()
+    {
+        var sid = PlayerPrefs.GetString("sid");
+        if (string.IsNullOrEmpty(sid))
+        {
+            OpenSigninPanel();
+        }
+    }
 
     /// <summary>
     /// Main에서 Game Scene으로 전환시 호출될 메서드
@@ -34,6 +45,24 @@ public class GameManager : Singleton<GameManager>
         {
             var confirmPanelObject = Instantiate(confirmPanel, canvas.transform);
             confirmPanelObject.GetComponent<ConfirmPanelController>().Show(message, onConfirmButtonClicked);
+        }
+    }
+
+    public void OpenSigninPanel() // 로그인 팝업 표시
+    {
+        if (canvas != null)
+        {
+            var signinPanelObject = Instantiate(signinPanel, canvas.transform);
+            signinPanelObject.GetComponent<SigninPanelController>().Show();
+        }
+    }
+
+    public void OpenSignupPanel() // 회원가입 팝업 표시
+    {
+        if (canvas != null)
+        {
+            var signupPanelObject = Instantiate(signupPanel, canvas.transform);
+            signupPanelObject.GetComponent<SignupPanelController>().Show();
         }
     }
 

@@ -38,4 +38,9 @@ public class PanelController : MonoBehaviour
             Destroy(gameObject); // 창이 필요없을 때 파괴
         });
     }
+
+    protected void Shake()
+    {
+        panelRectTransform.DOShakeAnchorPos(0.3f);
+    }
 }
