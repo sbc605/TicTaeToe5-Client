@@ -5,7 +5,7 @@ public class Constants
     public const string ServerURL = "http://localhost:3000";
     public const string SocketServerURL = "ws://localhost:3000";
 
-    public enum MultiplayContollerState
+    public enum MultiplayControllerState
     {
         CreateRoom,     // 规 积己
         JoinRoom,       // 积己等 规俊 曼咯
