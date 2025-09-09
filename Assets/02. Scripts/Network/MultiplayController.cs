@@ -1,6 +1,7 @@
-using System;
 using Newtonsoft.Json;
 using SocketIOClient;
+using System;
+using System.Net.Sockets;
 using UnityEngine;
 
 // joinRoom/createRoom 이벤트 전달할 때 전달되는 정보의 타입
@@ -39,12 +40,13 @@ public class MultiplayController : IDisposable
             Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
         });
 
-        _socket.On("createRoom", CreateRoom);
-        _socket.On("joinRoom", JoinRoom);
-        _socket.On("startGame", StartGame);
-        _socket.On("exitRoom", ExitRoom);
-        _socket.On("endGame", EndGame);
-        _socket.On("doOpponent", DoOpponent);
+        _socket.OnUnityThread("createRoom", CreateRoom);
+        _socket.OnUnityThread("joinRoom", JoinRoom);
+        _socket.OnUnityThread("startGame", StartGame);
+        _socket.OnUnityThread("exitRoom", ExitRoom);
+        _socket.OnUnityThread("endGame", EndGame);
+        _socket.OnUnityThread("doOpponent", DoOpponent);
+        _socket.Connect(); // 서버에 접속
     }
 
     #region Server -> Client
@@ -92,9 +94,9 @@ public class MultiplayController : IDisposable
     }
 
     // 플레이어가 마커를 두면 호출
-    public void DoPlayer(string roomId, int position)
+    public void DoPlayer(string roomId, int blockIndex)
     {
-        _socket.Emit("doPlayer", new {roomId, position});
+        _socket.Emit("doPlayer", new { roomId, blockIndex });
     }
 
     public void Dispose()

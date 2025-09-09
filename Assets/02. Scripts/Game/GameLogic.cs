@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class GameLogic
+public class GameLogic : IDisposable
 {
     public BlockController blockController; // Block을 처리할 객체
     private Constants.PlayerType[,] _board; // 보드의 상태 정보
@@ -8,6 +9,9 @@ public class GameLogic
     public BasePlayerState firstPlayerState; // Player A
     public BasePlayerState secondPlayerState; // Player B
     public BasePlayerState currentPlayer; // 현재 턴의 플레이어
+
+    private MultiplayController multiplayController;
+    private string _roomId;
 
     public enum GameResult { None, Win, Lose, Draw }
 
@@ -42,6 +46,37 @@ public class GameLogic
                 break;
 
             case Constants.GameType.MultiPlay:
+                multiplayController = new MultiplayController((state, roomId) =>
+                {
+                    _roomId = roomId;
+                    switch (state)
+                    {
+                        case Constants.MultiplayControllerState.CreateRoom:
+                            Debug.Log("## Create Room ##");
+                            // TODO: 대기 화면 UI 표시
+                            break;
+                        case Constants.MultiplayControllerState.JoinRoom:
+                            Debug.Log("## Join Room ##");
+                            firstPlayerState = new MultiplayState(true, multiplayController);
+                            secondPlayerState = new PlayerState(false, multiplayController, _roomId);
+                            SetState(firstPlayerState);
+                            break;
+                        case Constants.MultiplayControllerState.StartGame:
+                            Debug.Log("## Start Game ##");
+                            firstPlayerState = new PlayerState(true, multiplayController, _roomId);
+                            secondPlayerState = new MultiplayState(false, multiplayController);
+                            SetState(firstPlayerState);
+                            break;
+                        case Constants.MultiplayControllerState.ExitRoom:
+                            Debug.Log("## Exit Room ##");
+                            // TODO: 팝업 띄우고 메인화면으로 이동
+                            break;
+                        case Constants.MultiplayControllerState.EndGame:
+                            Debug.Log("## End Game ##");
+                            // TODO: 팝업 띄우고 메인화면으로 이동
+                            break;
+                    }
+                });
                 break;
         }
     }
@@ -96,6 +131,12 @@ public class GameLogic
         {
             GameManager.Instance.ChangeToMainScene();
         });
+    }
+
+    public void Dispose()
+    {
+        multiplayController?.LeaveRoom(_roomId);
+        multiplayController?.Dispose();
     }
 }
 
